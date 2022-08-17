@@ -10,7 +10,7 @@ import labprog2.model.Airport;
 
 import java.io.IOException;
 
-public class TestReadFromAirportCsv {
+public class ReadFromAirportCsvTest {
 
     @Test
     public void testReadAirportDataCsv() throws IOException, CsvException {
