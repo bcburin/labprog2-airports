@@ -19,17 +19,34 @@
   </properties>
 
   <dependencies>
+  
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>  
       <groupId>org.javatuples</groupId>  
       <artifactId>javatuples</artifactId>  
       <version>1.2</version>  
-    </dependency>   
+    </dependency> 
+
+    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.30</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+    <version>5.3</version>
+    
+  </dependency>
+
   </dependencies>
 
   <build>
