@@ -1,15 +1,16 @@
 package labprog2.util.location;
 
 public class Address {
-    private String location;
-    private String streetNumber;
-    private String street;
-    private String city;
-    private String county;
-    private String state;
-    private String countryISO;
-    private String country;
-    private String postalCode;
+    private final String location;
+    private final String streetNumber;
+    private final String street;
+    private final String city;
+    private final String county;
+    private final String state;
+    private final String state_code;
+    private final String countryISO;
+    private final String country;
+    private final String postalCode;
 
     public Address(String[] data) {
         this.location = data[0];
@@ -18,9 +19,10 @@ public class Address {
         this.city = data[3];
         this.county = data[4];
         this.state = data[5];
-        this.countryISO = data[6];
-        this.country = data[7];
-        this.postalCode = data[8];
+        this.state_code = data[6];
+        this.countryISO = data[7];
+        this.country = data[8];
+        this.postalCode = data[9];
     }
 
     public String getLocation() {
@@ -59,4 +61,5 @@ public class Address {
         return this.postalCode;
     }
 
+    public String getStateCode() { return state_code; }
 }

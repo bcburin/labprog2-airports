@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -17,7 +18,7 @@ public class Airport implements Node {
     private static final String pathToCsv = "src/main/resources/airport_data.csv";
 
     private int id;
-    private String iata;
+    private final String iata;
     private String icao;
     private String name;
     private Address address;
@@ -31,12 +32,12 @@ public class Airport implements Node {
         this.iata = data[1];
         this.icao = data[2];
         this.name = data[3];
-        this.address = new Address(Arrays.copyOfRange(data, 4, 13));
-        this.phone = data[13];
+        this.address = new Address(Arrays.copyOfRange(data, 4, 14));
+        this.phone = data[14];
         this.geographicCoordinates = new GeographicCoordinates(
-                Double.parseDouble(data[14]), Double.parseDouble(data[15]));
-        this.ucl = Integer.parseInt(data[16]);
-        this.website = data[17];
+                Double.parseDouble(data[15]), Double.parseDouble(data[16]));
+        this.ucl = Integer.parseInt(data[17]);
+        this.website = data[18];
     }
 
     public Airport(String iata) {
@@ -50,7 +51,7 @@ public class Airport implements Node {
         if (!(other instanceof Airport))
             return false;
         Airport otherNode = (Airport) other;
-        return this.iata == otherNode.iata;
+        return Objects.equals(this.iata, otherNode.iata);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class Airport implements Node {
         FileReader fileReader = new FileReader(pathToCsv);
         CSVReader reader = new CSVReader(fileReader);
         List<String[]> r = reader.readAll();
-        Airport airports[] = new Airport[r.size() - 1];
+        Airport[] airports = new Airport[r.size() - 1];
         for (int i = 1; i != r.size(); ++i)
             airports[i - 1] = new Airport(r.get(i));
         reader.close();
