@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+
+  db:
+    build: ./db
+    restart: always
+    env_file:
+      - ./db/db.env
+    ports:
+      - '33061:3306'
+    volumes:
+      - airport-db:/var/lib/mysql
+
+  app:
+    build: ./
+    volumes:
+      - ./src:/usr/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+    links:
+      - db:app
+
+volumes:
+  airport-db:
