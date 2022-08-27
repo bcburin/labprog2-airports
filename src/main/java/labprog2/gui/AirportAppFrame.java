@@ -6,7 +6,7 @@ import labprog2.model.UserSearch;
 import labprog2.util.graph.Node;
 import labprog2.util.graph.exceptions.EdgeNotPresentException;
 import labprog2.util.graph.exceptions.NodeNotPresentException;
-import labprog2.util.mysql.MySQLAirportConnection;
+import labprog2.util.mysql.MySQLAirportDbConnection;
 
 import javax.swing.*;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AirportAppFrame extends JFrame {
 
     private JButton searchButton;
-    private JPanel panelAirportApp;
+    private JPanel mainPanel;
     private JComboBox<Airport> fromAirportComboBox;
     private JComboBox<Airport> toAirportComboBox;
     private JComboBox<String> toStateComboBox;
@@ -27,13 +27,13 @@ public class AirportAppFrame extends JFrame {
 
     private final AirportNetwork airportNetwork;
 
-    private final MySQLAirportConnection airportConnection;
+    private final MySQLAirportDbConnection airportConnection;
 
     private final List<String> airportStates;
 
     private final Airport[] airports;
 
-    public AirportAppFrame(Airport[] airports, MySQLAirportConnection airportConnection)  {
+    public AirportAppFrame(Airport[] airports, MySQLAirportDbConnection airportConnection)  {
         this.airports = airports;
         this.airportNetwork = new AirportNetwork(this.airports);
         this.airportConnection = airportConnection;
@@ -45,16 +45,16 @@ public class AirportAppFrame extends JFrame {
 
         setAirportStateComboBoxes();
 
-        searchButton.addActionListener(actionEvent -> { handleSearchButtonClick(); });
+        searchButton.addActionListener(actionEvent -> handleSearchButtonClick());
 
-        fromStateComboBox.addActionListener(actionEvent -> { handleFromStateChange(); });
+        fromStateComboBox.addActionListener(actionEvent -> handleFromStateChange());
 
-        toStateComboBox.addActionListener(actionEvent -> { handleToStateChange(); });
+        toStateComboBox.addActionListener(actionEvent -> handleToStateChange());
 
     }
 
     private void setupPanel() {
-        setContentPane(panelAirportApp);
+        setContentPane(mainPanel);
         setTitle("Airport App");
         pack();
         setVisible(true);
@@ -130,7 +130,7 @@ public class AirportAppFrame extends JFrame {
 
         if(selectedState.equals("-")) {
             updateFromAirportComboBox(this.airports);
-        };
+        }
 
         List<Airport> selectedAirports = new LinkedList<>();
 
@@ -150,7 +150,7 @@ public class AirportAppFrame extends JFrame {
 
         if(selectedState.equals("-")) {
             updateToAirportComboBox(this.airports);
-        };
+        }
 
         List<Airport> selectedAirports = new LinkedList<>();
 

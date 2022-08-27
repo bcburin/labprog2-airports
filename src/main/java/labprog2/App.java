@@ -1,23 +1,21 @@
 package labprog2;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.swing.JFrame;
-
-import com.opencsv.exceptions.CsvException;
 import labprog2.gui.AirportAppFrame;
+//import labprog2.gui.AirportAppGUI;
 import labprog2.model.Airport;
-import labprog2.util.mysql.MySQLAirportConnection;
+import labprog2.util.mysql.MySQLAirportDbConnection;
 
 public class App {
-    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, CsvException {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException{
 
-        MySQLAirportConnection airportConnection = new MySQLAirportConnection();
+        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
 
         Airport[] airports = airportConnection.getAllAirportData();
 
-        AirportAppFrame appFrame = new AirportAppFrame(airports);
+        AirportAppFrame appFrame = new AirportAppFrame(airports, airportConnection);
 
+//        AirportAppGUI gui = new AirportAppGUI();
     }
 }
