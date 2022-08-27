@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import labprog2.model.Airport;
-import labprog2.util.mysql.MySQLAirportConnection;
+import labprog2.util.mysql.MySQLAirportDbConnection;
 
-public class MySQLAirportConnectionTest {
+public class MySQLAirportDbConnectionTest {
 
     @Test
     public void testGetAirportDataByID() throws ClassNotFoundException, SQLException {
-        MySQLAirportConnection airportConnection = new MySQLAirportConnection();
+        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
 
         Airport airportCwb = airportConnection.getAirportData(1613);
         Airport airportFor = airportConnection.getAirportData(2363);
@@ -28,7 +28,7 @@ public class MySQLAirportConnectionTest {
 
     @Test
     public void testGetAirportDataByIata() throws ClassNotFoundException, SQLException {
-        MySQLAirportConnection airportConnection = new MySQLAirportConnection();
+        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
 
         Airport airportCwb = airportConnection.getAirportData("CWB");
         Airport airportFor = airportConnection.getAirportData("FOR");
@@ -43,7 +43,7 @@ public class MySQLAirportConnectionTest {
 
     @Test
     public void testGetAllAirportData() throws ClassNotFoundException, SQLException {
-        MySQLAirportConnection airportConnection = new MySQLAirportConnection();
+        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
 
         Airport[] airports = airportConnection.getAllAirportData();
 
