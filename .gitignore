@@ -31,4 +31,5 @@ target/*
 # IDE config files
 .vscode/
 .eclipse
+.idea/
 .classpath
