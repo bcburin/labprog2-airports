@@ -1,60 +1,50 @@
 package labprog2.util.graph;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Implements a path as a list of nodes.
+ */
 public class Path {
-    private List<Node> path;
-    private int cost;
+    private final List<Node> path;
 
-    public Path(Collection<Node> nodes, int cost) {
-        this.cost = cost;
-        this.path = new LinkedList<Node>();
-        this.path.addAll(nodes);
-    }
-
+    /**
+     * Initializes an empty path.
+     */
     public Path() {
-        this.cost = Integer.MAX_VALUE;
-        this.path = new LinkedList<Node>();
+        this.path = new LinkedList<>();
     }
 
+    /**
+     * Adds a node to the path.
+     *
+     * @param node node to be added.
+     * @return reference to current path.
+     */
     public Path addNode(Node node) {
         path.add(node);
         return this;
     }
 
+    /**
+     * Reverses the path.
+     *
+     * @return reversed path.
+     */
     public Path reverse() {
         Collections.reverse(path);
         return this;
     }
 
-    public Node getStart() {
-        return path.get(0);
-    }
-
-    public Node getEnd() {
-        return path.get(path.size() - 1);
-    }
-
+    /**
+     * Returns nodes of the path.
+     *
+     * @return List containing nodes of the path.
+     */
     public List<Node> getNodes() {
         return path;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public boolean isEmpty() {
-        return path.size() == 0;
-    }
-
-    public void print() {
-        for (int i = 0; i != path.size(); ++i) {
-            System.out.print(((i == 0) ? "" : " -> ") + path.get(i).toString());
-        }
-        System.out.println();
     }
 
 }
