@@ -174,12 +174,18 @@ public class MatrixGraph implements Graph {
 
         Path path = new Path();
 
-        if (dist[desIndex] == Integer.MAX_VALUE)
-            return path;
+        // Set the cost of the path as the cost to reach the destiny node
+        path.setCost(dist[desIndex]);
 
+        // If the distance to the destiny node is infinite (they are not connected)
+        if (dist[desIndex] == Integer.MAX_VALUE)
+            return path; // return empty path with infinite cost
+
+        // Construct the path from destiny to source by backtracking with the prev array
         for (int index = desIndex; index != -1; index = prev[index])
             path.addNode(getNodeAtIndex(index));
 
+        // Reverse the path so it is directed from source to destiny
         return path.reverse();
     }
 
