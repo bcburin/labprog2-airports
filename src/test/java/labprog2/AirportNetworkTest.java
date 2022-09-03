@@ -10,6 +10,7 @@ import labprog2.util.graph.exceptions.NodeNotPresentException;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class AirportNetworkTest {
 
@@ -17,7 +18,7 @@ public class AirportNetworkTest {
     public void testGetShortestPath() throws IOException, CsvException, EdgeNotPresentException, NodeNotPresentException {
         Airport[] airports = Airport.readFromAirportCsv();
 
-        AirportNetwork airportNetwork = new AirportNetwork(airports);
+        AirportNetwork airportNetwork = new AirportNetwork(Arrays.asList(airports));
 
         airportNetwork.getShortestNonDirectPath(airports[0], airports[1]);
     }

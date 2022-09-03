@@ -2,20 +2,29 @@ package labprog2.model;
 
 import java.sql.Timestamp;
 
+/**
+ * Models a user search.
+ */
 public class UserSearch {
 
     private final int srcAirportId;
     private final int desAirportId;
-    private final String srcAirportIata;
-    private final String desAirportIata;
     private final Timestamp searchTimestamp;
+    private final String searchResults;
 
-    public UserSearch(Airport srcAirport, Airport desAirport, Timestamp searchTimestamp) {
+    /**
+     * Creates a new user search object.
+     *
+     * @param srcAirport origin airport.
+     * @param desAirport destiny airport.
+     * @param searchTimestamp timestamp of the moment the query was made.
+     * @param searchResults result string of the query.
+     */
+    public UserSearch(Airport srcAirport, Airport desAirport, Timestamp searchTimestamp, String searchResults) {
         this.srcAirportId = srcAirport.getId();
         this.desAirportId = desAirport.getId();
-        this.srcAirportIata = srcAirport.getIata();
-        this.desAirportIata = desAirport.getIata();
         this.searchTimestamp = searchTimestamp;
+        this.searchResults = searchResults;
     }
 
     public int getSrcAirportId() {
@@ -26,16 +35,9 @@ public class UserSearch {
         return desAirportId;
     }
 
-    public String getSrcAirportIata() {
-        return srcAirportIata;
-    }
-
-    public String getDesAirportIata() {
-        return desAirportIata;
-    }
-
     public Timestamp getSearchTimestamp() {
         return searchTimestamp;
     }
 
+    public String getSearchResults() { return searchResults; }
 }
