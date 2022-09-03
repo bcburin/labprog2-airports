@@ -29,7 +29,7 @@ public class AirportAppFrame extends JFrame {
 
     private final MySQLAirportDbConnection airportConnection;
 
-    private Airport[] airports;
+    private List<Airport> airports;
 
     /**
      * Gets airport data from database. Setups frame and adds handlers to components. Informs user in case of
@@ -103,7 +103,7 @@ public class AirportAppFrame extends JFrame {
      *
      * @param airports airports to be added to the combo box.
      */
-    private void updateFromAirportComboBox(Airport[] airports) {
+    private void updateFromAirportComboBox(List<Airport> airports) {
         fromAirportComboBox.removeAllItems();
         for (Airport airport : airports) {
             fromAirportComboBox.addItem(airport);
@@ -115,7 +115,7 @@ public class AirportAppFrame extends JFrame {
      *
      * @param airports airports to be added to the combo box.
      */
-    private void updateToAirportComboBox(Airport[] airports) {
+    private void updateToAirportComboBox(List<Airport> airports) {
         toAirportComboBox.removeAllItems();
         for (Airport airport : airports) {
             toAirportComboBox.addItem(airport);
@@ -183,7 +183,7 @@ public class AirportAppFrame extends JFrame {
             }
         }
 
-        updateFromAirportComboBox(selectedAirports.toArray(new Airport[0]));
+        updateFromAirportComboBox(selectedAirports);
     }
 
     /**
@@ -207,7 +207,7 @@ public class AirportAppFrame extends JFrame {
             }
         }
 
-        updateToAirportComboBox(selectedAirports.toArray(new Airport[0]));
+        updateToAirportComboBox(selectedAirports);
     }
 
 }
