@@ -1,5 +1,8 @@
 package labprog2.util.location;
 
+/**
+ * Models an address object.
+ */
 public class Address {
     private final String location;
     private final String streetNumber;
@@ -12,6 +15,22 @@ public class Address {
     private final String country;
     private final String postalCode;
 
+    /**
+     * Accepts an array of string describing the address object to be created. There should be exactly ten strings
+     * in the array, defined by the following order
+     *  - Location
+     *  - Street number
+     *  - Street
+     *  - City
+     *  - County
+     *  - State
+     *  - State Code
+     *  - Country ISO
+     *  - Country
+     *  - Postal code
+     *
+     * @param data array of strings containing the address data.
+     */
     public Address(String[] data) {
         this.location = data[0];
         this.streetNumber = data[1];
