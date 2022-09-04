@@ -1,21 +1,40 @@
 package labprog2;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import labprog2.gui.AirportAppFrame;
-//import labprog2.gui.AirportAppGUI;
-import labprog2.model.Airport;
-import labprog2.util.mysql.MySQLAirportDbConnection;
+
+import javax.swing.*;
 
 public class App {
-    public static void main(String[] args) throws SQLException, ClassNotFoundException{
 
-        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
+    private static final String DATABASE_NAME = "airport_app";
+    private static final String USER_NAME = "airportdb_user";
+    private static final String PASSWORD = "$up3rS3cr3t";
 
-        Airport[] airports = airportConnection.getAllAirportData();
+    public static void main(String[] args) {
 
-        AirportAppFrame appFrame = new AirportAppFrame(airports, airportConnection);
+        try {
+            // Get connection to database
+            Connection connection = connectToDb();
 
-//        AirportAppGUI gui = new AirportAppGUI();
+            // Render application GUI
+            AirportAppFrame appFrame = new AirportAppFrame(connection);
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(new JFrame(), "Unable to connect to the database");
+        }
+
+    }
+
+    public static Connection connectToDb() throws SQLException, ClassNotFoundException {
+        // Connection string
+        String url = String.format("jdbc:mysql://127.0.0.1/%s?user=%s&password=%s", DATABASE_NAME, USER_NAME, PASSWORD);
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+        return DriverManager.getConnection(url);
     }
 }

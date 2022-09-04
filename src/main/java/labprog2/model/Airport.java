@@ -2,7 +2,12 @@ package labprog2.model;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +19,7 @@ import labprog2.util.location.Address;
 import labprog2.util.location.GeographicCoordinates;
 
 /**
- * Models an airport object. Implements the node interface so it may be used as a graph element.
+ * Models an airport object. Implements the node interface, so it may be used as a graph element.
  * @see labprog2.util.graph.Node
  * @see labprog2.util.graph.Graph
  */
@@ -31,6 +36,17 @@ public class Airport implements Node {
     private GeographicCoordinates geographicCoordinates;
     private int ucl;
     private String website;
+
+    private static final String AIRPORTS_TABLE = "airports";
+
+    private static final String SELECT_ALL_QUERY = String.format("SELECT * FROM %s", AIRPORTS_TABLE);
+
+    private static final String SELECT_BY_ID_QUERY = String.format("SELECT * FROM %s WHERE id=?", AIRPORTS_TABLE);
+
+    private static final String SELECT_BY_IATA_QUERY = String.format("SELECT * FROM %s WHERE iata=?", AIRPORTS_TABLE);
+
+    private static final String INSERT_AIRPORT_QUERY = String
+            .format("INSERT INTO %s VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", AIRPORTS_TABLE);
 
     /**
      * Creates an airport object from an array of strings containing exactly 19 elements, given in the following
@@ -143,6 +159,128 @@ public class Airport implements Node {
             airports[i - 1] = new Airport(r.get(i));
         reader.close();
         return airports;
+    }
+
+    /**
+     * Insert airport data to the database.
+     *
+     * @param connection active connection to the database.
+     * @throws SQLException thrown if an error occurred while creating the insert statement.
+     */
+    public void insertDb(Connection connection) throws SQLException {
+        PreparedStatement insertStatement = connection.prepareStatement(INSERT_AIRPORT_QUERY);
+
+        insertStatement.setInt(1, getId());
+        insertStatement.setString(2, getIata());
+        insertStatement.setString(3, getIcao());
+        insertStatement.setString(4, getName());
+        insertStatement.setString(5, getAddress().getLocation());
+        insertStatement.setString(6, getAddress().getStreetNumber());
+        insertStatement.setString(7, getAddress().getStreet());
+        insertStatement.setString(8, getAddress().getCity());
+        insertStatement.setString(9, getAddress().getCounty());
+        insertStatement.setString(10, getAddress().getState());
+        insertStatement.setString(11, getAddress().getStateCode());
+        insertStatement.setString(12, getAddress().getCountryISO());
+        insertStatement.setString(13, getAddress().getCountry());
+        insertStatement.setString(14, getAddress().getPostalCode());
+        insertStatement.setString(15, getPhone());
+        insertStatement.setDouble(16, getGeographicCoordinates().getLatitude());
+        insertStatement.setDouble(17, getGeographicCoordinates().getLongitude());
+        insertStatement.setInt(18, getUcl());
+        insertStatement.setString(19, getWebsite());
+        insertStatement.executeUpdate();
+    }
+
+    /**
+     * Retrieves data about all airports stored in the database.
+     *
+     * @param connection active connection to the database.
+     * @return list containing all the airports in the database.
+     * @throws SQLException thrown if an error occurred while creating the insert statement.
+     */
+    public static List<Airport> getAllAirportDataDb(Connection connection) throws SQLException {
+
+        ResultSet airportSet = connection.createStatement().executeQuery(SELECT_ALL_QUERY);
+
+        List<Airport> airportList = new LinkedList<>();
+
+        while (airportSet.next()) {
+            Airport airport = packAirportQueryResults(airportSet);
+            airportList.add(airport);
+        }
+
+        return airportList;
+    }
+
+    /**
+     * Retrieves data about an airport in the database by its id.
+     *
+     * @param connection active connection to the database
+     * @param id id of the airport for querying
+     * @return queried airport
+     * @throws SQLException thrown if an error occurred while creating the insert statement.
+     */
+    public static Airport getAirportDataDb(Connection connection, int id) throws SQLException {
+        PreparedStatement selectStatement = connection.prepareStatement(SELECT_BY_ID_QUERY);
+        selectStatement.setInt(1, id);
+
+        ResultSet airportSet = selectStatement.executeQuery();
+        airportSet.next();
+
+        return packAirportQueryResults(airportSet);
+    }
+
+    /**
+     * Retrieves data about an airport in the database by its iata code.
+     *
+     * @param connection active connection to the database
+     * @param iata iata of the airport for querying
+     * @return queried airport
+     * @throws SQLException thrown if an error occurred while creating the insert statement.
+     */
+    public static Airport getAirportDataDb(Connection connection, String iata) throws SQLException {
+        PreparedStatement selectStatement = connection.prepareStatement(SELECT_BY_IATA_QUERY);
+        selectStatement.setString(1, iata);
+
+        ResultSet airportSet = selectStatement.executeQuery();
+        airportSet.next();
+
+        return packAirportQueryResults(airportSet);
+    }
+
+    /**
+     * Parses the result set of a query on the airport table into an airport object.
+     *
+     * @param airportSet result set of a select query in the airport table
+     * @return Airport corresponding to the read data.
+     * @throws SQLException thrown if an error occurred while reading the data
+     */
+    private static Airport packAirportQueryResults(ResultSet airportSet) throws SQLException {
+        String id = airportSet.getString(1);
+        String iata = airportSet.getString(2);
+        String icao = airportSet.getString(3);
+        String name = airportSet.getString(4);
+        String location = airportSet.getString(5);
+        String streetNumber = airportSet.getString(6);
+        String street = airportSet.getString(7);
+        String city = airportSet.getString(8);
+        String county = airportSet.getString(9);
+        String state = airportSet.getString(10);
+        String state_code = airportSet.getString(11);
+        String countryIso = airportSet.getString(12);
+        String country = airportSet.getString(13);
+        String postalCode = airportSet.getString(14);
+        String phone = airportSet.getString(15);
+        String latitude = airportSet.getString(16);
+        String longitude = airportSet.getString(17);
+        String uct = airportSet.getString(18);
+        String website = airportSet.getString(19);
+
+        String[] airportStrings = { id, iata, icao, name, location, streetNumber, street, city, county, state,
+                state_code, countryIso, country, postalCode, phone, latitude, longitude, uct, website };
+
+        return new Airport(airportStrings);
     }
 
 }

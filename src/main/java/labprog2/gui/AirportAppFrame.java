@@ -4,11 +4,10 @@ import labprog2.model.Airport;
 import labprog2.model.AirportNetwork;
 import labprog2.model.UserSearch;
 import labprog2.util.graph.Node;
-import labprog2.util.graph.exceptions.EdgeNotPresentException;
 import labprog2.util.graph.exceptions.NodeNotPresentException;
-import labprog2.util.mysql.MySQLAirportDbConnection;
 
 import javax.swing.*;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -25,28 +24,29 @@ public class AirportAppFrame extends JFrame {
     private JComboBox<String> fromStateComboBox;
     private JLabel responseLabel;
 
-    private AirportNetwork airportNetwork;
+    private final AirportNetwork airportNetwork;
 
-    private final MySQLAirportDbConnection airportConnection;
+    private final Connection connection;
 
-    private List<Airport> airports;
+    private final List<Airport> airports;
 
     /**
      * Gets airport data from database. Setups frame and adds handlers to components. Informs user in case of
      * failure.
      *
-     * @param airportConnection active connection to the database.
+     * @param connection active connection to the database.
      */
-    public AirportAppFrame(MySQLAirportDbConnection airportConnection) {
-        this.airportConnection = airportConnection;
+    public AirportAppFrame(Connection connection) {
+        this.connection = connection;
 
         try {
             // Get airport data from database and create network
-            this.airports = airportConnection.getAllAirportData();
+            this.airports = Airport.getAllAirportDataDb(this.connection);
             this.airportNetwork = new AirportNetwork(this.airports);
         } catch (SQLException e) {
             // Inform user of failure in getting data
             JOptionPane.showMessageDialog(this, "Unable to get airport data");
+            throw new RuntimeException(e);
         }
 
         setupPanel();
@@ -139,7 +139,7 @@ public class AirportAppFrame extends JFrame {
 
         try {
             pathAirports = this.airportNetwork.getShortestNonDirectPath(srcAirport, desAirport).getNodes();
-        } catch (EdgeNotPresentException | NodeNotPresentException e) {
+        } catch (NodeNotPresentException e) {
             throw new RuntimeException(e);
         }
 
@@ -156,7 +156,7 @@ public class AirportAppFrame extends JFrame {
 
         try {
             // Save user search data
-            this.airportConnection.insertUserSearchData(userSearch);
+            userSearch.insertDb(this.connection);
         } catch (SQLException e) {
             System.out.println("Unable to save user search data.");
         }

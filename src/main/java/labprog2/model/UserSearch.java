@@ -1,5 +1,8 @@
 package labprog2.model;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
@@ -11,6 +14,11 @@ public class UserSearch {
     private final int desAirportId;
     private final Timestamp searchTimestamp;
     private final String searchResults;
+
+    private static final String USER_SEARCHES_TABLE = "searches";
+
+    private static final String INSERT_USER_SEARCH_QUERY = String.format(
+            "INSERT INTO %s (src_airport_id, des_airport_id, search_time, result) VALUES (?, ?, ?, ?)", USER_SEARCHES_TABLE);
 
     /**
      * Creates a new user search object.
@@ -40,4 +48,19 @@ public class UserSearch {
     }
 
     public String getSearchResults() { return searchResults; }
+
+    /**
+     * Inserts user search to the database.
+     *
+     * @param connection active connection to the database.
+     * @throws SQLException thrown if an error occurred while creating the insert statement.
+     */
+    public void insertDb(Connection connection) throws SQLException {
+        PreparedStatement insertStatement = connection.prepareStatement(INSERT_USER_SEARCH_QUERY);
+        insertStatement.setInt(1, getSrcAirportId());
+        insertStatement.setInt(2, getDesAirportId());
+        insertStatement.setTimestamp(3, getSearchTimestamp());
+        insertStatement.setString(4, getSearchResults());
+        insertStatement.executeUpdate();
+    }
 }
