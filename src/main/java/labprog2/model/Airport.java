@@ -14,16 +14,14 @@ import java.util.Objects;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
-import labprog2.util.graph.Node;
 import labprog2.util.location.Address;
 import labprog2.util.location.GeographicCoordinates;
 
 /**
- * Models an airport object. Implements the node interface, so it may be used as a graph element.
- * @see labprog2.util.graph.Node
+ * Models an airport object.
  * @see labprog2.util.graph.Graph
  */
-public class Airport implements Node {
+public class Airport {
 
     private static final String pathToCsv = "src/main/resources/airport_data.csv";
 
