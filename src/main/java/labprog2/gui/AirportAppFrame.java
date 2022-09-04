@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AirportAppFrame extends JFrame {
@@ -23,6 +24,8 @@ public class AirportAppFrame extends JFrame {
     private JComboBox<String> toStateComboBox;
     private JComboBox<String> fromStateComboBox;
     private JLabel responseLabel;
+    private JComboBox<Airport> getInformationComboBox;
+    private JButton getInformationButton;
 
     private final AirportNetwork airportNetwork;
 
@@ -58,6 +61,8 @@ public class AirportAppFrame extends JFrame {
         fromStateComboBox.addActionListener(actionEvent -> handleFromStateChange());
 
         toStateComboBox.addActionListener(actionEvent -> handleToStateChange());
+
+        getInformationButton.addActionListener(actionEvent -> handleGetInformationButtonClick());
     }
 
     /**
@@ -71,7 +76,10 @@ public class AirportAppFrame extends JFrame {
         setVisible(true);
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Components regarding query results should not be visible at first
         responseLabel.setVisible(false);
+        getInformationButton.setVisible(false);
+        getInformationComboBox.setVisible(false);
     }
 
     /**
@@ -81,7 +89,7 @@ public class AirportAppFrame extends JFrame {
     private void setAirportStateComboBoxes() {
         List<String> airportStates = new LinkedList<>();
 
-        for(Airport airport : this.airports) airportStates.add(airport.getAddress().getStateCode());
+        for (Airport airport : this.airports) airportStates.add(airport.getAddress().getStateCode());
 
         fromStateComboBox.removeAllItems();
         toStateComboBox.removeAllItems();
@@ -123,9 +131,66 @@ public class AirportAppFrame extends JFrame {
     }
 
     /**
+     * Find the airports in the shortest non-direct path.
+     *
+     * @param srcAirport source airport.
+     * @param desAirport destiny airport.
+     * @return list containing the airports in the shortest non-direct path.
+     */
+    private List<Airport> findShortestPath(Airport srcAirport, Airport desAirport) {
+        try {
+            // Get nodes that make up the shortest path
+            List<Node> pathAirportNodes = this.airportNetwork.getShortestNonDirectPath(srcAirport, desAirport).getNodes();
+
+            // Transform the list of nodes to a list of airport objects
+            List<Airport> pathAirports = new LinkedList<>();
+
+            // Iterate through all nodes and saved airports
+            for (Node airportNode : pathAirportNodes) {
+                for (Airport airport : this.airports) {
+                    // Compare each node to a saved airport
+                    if (Objects.equals(airport.getIata(), airportNode.toString())) {
+                        // If their information matches, add airport to the list
+                        pathAirports.add(airport);
+                    }
+                }
+            }
+
+            return pathAirports;
+
+        } catch (NodeNotPresentException e) {
+            /* This code will never be reached */
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Shows a string containing all airports of the path to the user. Adds these airports to the
+     * getInformationComboBox. Makes all components related to the display of the result visible.
+     *
+     * @param pathAirports list of airports in the result path of the queried route.
+     */
+    private void setupResultComponents(List<Airport> pathAirports) {
+        // Creates string displaying sequentially all airports in the path, separated by the string " => "
+        String responseString = pathAirports.stream().map(String::valueOf).collect(Collectors.joining(" => "));
+
+        responseLabel.setText(responseString);
+
+        // Add path airports to getInformationComboBox
+        for (Airport airport : pathAirports) {
+            getInformationComboBox.addItem(airport);
+        }
+
+        // Make components visible if they are not already (initial condition)
+        responseLabel.setVisible(true);
+        getInformationButton.setVisible(true);
+        getInformationComboBox.setVisible(true);
+    }
+
+    /**
      * Handles the event of the user clicking the "search" button. First, the origin and the destiny airports are
      * retrieved. Then, the shortest path between them is found. A string containing all the airports in the path,
-     * separated by " => ", is created and shown to the user through the response label, which is set to visible.
+     * separated by " => ", is created and shown to the user through the response label.
      * Finally, the user search is stored in a database.
      */
     private void handleSearchButtonClick() {
@@ -135,24 +200,16 @@ public class AirportAppFrame extends JFrame {
         assert srcAirport != null;
         assert desAirport != null;
 
-        List<Node> pathAirports;
+        List<Airport> pathAirports = findShortestPath(srcAirport, desAirport);
 
-        try {
-            pathAirports = this.airportNetwork.getShortestNonDirectPath(srcAirport, desAirport).getNodes();
-        } catch (NodeNotPresentException e) {
-            throw new RuntimeException(e);
-        }
+        setupResultComponents(pathAirports);
 
-        // Creates string displaying sequentially all airports in the path, separated by the string " => "
-        String responseString = pathAirports.stream().map(String::valueOf).collect(Collectors.joining(" => "));
-
-        responseLabel.setText(responseString);
-
-        // Make response label visible if it's not already (initial condition)
-        responseLabel.setVisible(true);
-
+        // Create user search object
         UserSearch userSearch = new UserSearch(
-                srcAirport, desAirport, new Timestamp(System.currentTimeMillis()), responseString);
+                srcAirport,
+                desAirport,
+                new Timestamp(System.currentTimeMillis()),
+                pathAirports.stream().map(String::valueOf).collect(Collectors.joining(" ")));
 
         try {
             // Save user search data
@@ -171,14 +228,14 @@ public class AirportAppFrame extends JFrame {
 
         assert selectedState != null;
 
-        if(selectedState.equals("-")) {
+        if (selectedState.equals("-")) {
             updateFromAirportComboBox(this.airports);
         }
 
         List<Airport> selectedAirports = new LinkedList<>();
 
         for (Airport airport : this.airports) {
-            if(airport.getAddress().getStateCode().equals(selectedState)) {
+            if (airport.getAddress().getStateCode().equals(selectedState)) {
                 selectedAirports.add(airport);
             }
         }
@@ -195,19 +252,36 @@ public class AirportAppFrame extends JFrame {
 
         assert selectedState != null;
 
-        if(selectedState.equals("-")) {
+        if (selectedState.equals("-")) {
             updateToAirportComboBox(this.airports);
         }
 
         List<Airport> selectedAirports = new LinkedList<>();
 
         for (Airport airport : this.airports) {
-            if(airport.getAddress().getStateCode().equals(selectedState)) {
+            if (airport.getAddress().getStateCode().equals(selectedState)) {
                 selectedAirports.add(airport);
             }
         }
 
         updateToAirportComboBox(selectedAirports);
+    }
+
+    /**
+     * Method called whenever the user clicks the getInformationButton. Opens a modal that displays the available
+     * information for the selected airport in getInformationComboBox.
+     */
+    private void handleGetInformationButtonClick() {
+        // Get selected airport
+        Airport selectedAirport = (Airport) getInformationComboBox.getSelectedItem();
+
+        assert  selectedAirport != null;
+
+        AirportInformationModal infoModal = new AirportInformationModal(selectedAirport);
+
+        infoModal.pack();
+
+        infoModal.setVisible(true);
     }
 
 }
