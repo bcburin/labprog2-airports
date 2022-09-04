@@ -1,20 +1,18 @@
 package labprog2.util.graph.exceptions;
 
-import labprog2.util.graph.Node;
-
 /**
  * Exception to be thrown when a required edge is not in the graph.
  */
 public class EdgeNotPresentException extends GraphException {
-    private final Node srcNode;
-    private final Node desNode;
+    private final Object srcNode;
+    private final Object desNode;
 
     /**
      *
      * @param srcNode source node of the edge that caused the exception.
      * @param desNode destiny node of the edge that caused the exception.
      */
-    public EdgeNotPresentException(Node srcNode, Node desNode) {
+    public EdgeNotPresentException(Object srcNode, Object desNode) {
         this.srcNode = srcNode;
         this.desNode = desNode;
     }
@@ -23,7 +21,7 @@ public class EdgeNotPresentException extends GraphException {
      *
      * @return source node of the edge that caused the exception.
      */
-    public Node getSrcNode() {
+    public Object getSrcNode() {
         return srcNode;
     }
 
@@ -31,7 +29,7 @@ public class EdgeNotPresentException extends GraphException {
      *
      * @return destiny node of the edge that caused the exception.
      */
-    public Node getDesNode() {
+    public Object getDesNode() {
         return desNode;
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Implements a path as a list of nodes with a cost associated to them.
  */
-public class Path {
+public class Path<Node> {
     private final List<Node> path;
     private int cost;
 
@@ -50,7 +50,7 @@ public class Path {
      *
      * @return reversed path.
      */
-    public Path reverse() {
+    public Path<Node> reverse() {
         Collections.reverse(path);
         return this;
     }

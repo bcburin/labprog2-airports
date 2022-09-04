@@ -10,30 +10,28 @@ import java.util.List;
 /**
  * Interface that specifies a directional weighted graph.
  */
-public interface Graph {
+public interface Graph<Node> {
     /**
      * Adds a node to the graph, given it is not already present nor the graph is full.
      *
-     * @param node object implementing the node interface to be added to the graph.
-     * @return returns a reference to the current graph, in order to allow chaining.
+     * @param node object to be added to the graph.
      * @throws FullGraphException thrown if the graph is already full, as defined by its implementation.
      * @throws NodeAlreadyPresentException thrown if the node being added is already present
      *
      * @see Node
      */
-    public Graph addNode(Node node) throws FullGraphException, NodeAlreadyPresentException;
+    public void addNode(Node node) throws FullGraphException, NodeAlreadyPresentException;
 
     /**
      * Adds an edge to the graph. Both ends must be nodes already present. If the edge is already present,
      * it is substituted.
      *
      * @param edge Edge to be added or updated.
-     * @return returns a reference to the current graph, in order to allow chaining.
      * @throws NodeNotPresentException thrown if either of the edge endpoints is not present in the graph.
      *
      * @see Edge
      */
-    public Graph addEdge(Edge edge) throws NodeNotPresentException;
+    public void addEdge(Edge<Node> edge) throws NodeNotPresentException;
 
     /**
      * Removes the directional edge between the specified nodes, if it exists.
@@ -44,7 +42,7 @@ public interface Graph {
      * @throws EdgeNotPresentException thrown if there is no edge between the specified nodes
      * @throws NodeNotPresentException thrown if either of the specified nodes is not present
      */
-    public Edge removeEdgeBetween(Node srcNode, Node desNode) throws EdgeNotPresentException, NodeNotPresentException;
+    public Edge<Node> removeEdgeBetween(Node srcNode, Node desNode) throws EdgeNotPresentException, NodeNotPresentException;
 
     /**
      * Retrieves the edge between two nodes in the graph, if it exists.
@@ -55,7 +53,7 @@ public interface Graph {
      * @throws NodeNotPresentException thrown if either of the nodes is not present.
      * @throws EdgeNotPresentException thrown if there is no edge between the specified nodes.
      */
-    public Edge getEdgeBetween(Node srcNode, Node desNode) throws NodeNotPresentException, EdgeNotPresentException;
+    public Edge<Node> getEdgeBetween(Node srcNode, Node desNode) throws NodeNotPresentException, EdgeNotPresentException;
 
     /**
      * Returns a list containing all the edges that come out of the specified node.
@@ -64,7 +62,7 @@ public interface Graph {
      * @return List containing all the edges.
      * @throws NodeNotPresentException thrown if the specified node is not present in the graph.
      */
-    public List<Edge> getEdgesFrom(Node srcNode) throws NodeNotPresentException;
+    public List<Edge<Node>> getEdgesFrom(Node srcNode) throws NodeNotPresentException;
 
     /**
      * Returns the shortest path between two nodes within a graph.
@@ -74,7 +72,7 @@ public interface Graph {
      * @return shortest path.
      * @throws NodeNotPresentException thrown if either of the specified nodes is not present.
      */
-    public Path getShortestPath(Node srcNode, Node desNode) throws NodeNotPresentException;
+    public Path<Node> getShortestPath(Node srcNode, Node desNode) throws NodeNotPresentException;
 
     /**
      * Gets the shortest path with at least one intermediate node between two specified nodes.
@@ -84,7 +82,7 @@ public interface Graph {
      * @return shortest path with at least one intermediate node.
      * @throws NodeNotPresentException thrown if either of the specified nodes is not present.
      */
-    public Path getShortestNonDirectPath(Node srcNode, Node desNode)
+    public Path<Node> getShortestNonDirectPath(Node srcNode, Node desNode)
             throws NodeNotPresentException;
 
     /**
@@ -112,7 +110,7 @@ public interface Graph {
      * @return true if the edge is present, false otherwise.
      * @throws NodeNotPresentException if either of the provided edge endpoints (nodes) is not present in the graph.
      */
-    public boolean has(Edge edge) throws NodeNotPresentException;
+    public boolean has(Edge<Node> edge) throws NodeNotPresentException;
 
     /**
      * Verifies if graph is empty.

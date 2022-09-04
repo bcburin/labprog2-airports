@@ -2,6 +2,7 @@ package labprog2;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -10,7 +11,6 @@ import labprog2.model.Airport;
 import labprog2.util.graph.Edge;
 import labprog2.util.graph.Graph;
 import labprog2.util.graph.MatrixGraph;
-import labprog2.util.graph.Node;
 import labprog2.util.graph.exceptions.NodeAlreadyPresentException;
 import labprog2.util.graph.exceptions.NodeNotPresentException;
 
@@ -18,23 +18,24 @@ public class GraphTest {
 
     @Test
     public void testGetShortestPath() {
-        Node a = new Airport("A");
-        Node b = new Airport("B");
-        Node c = new Airport("C");
-        Node d = new Airport("D");
-        Node e = new Airport("E");
+        Airport a = new Airport("A");
+        Airport b = new Airport("B");
+        Airport c = new Airport("C");
+        Airport d = new Airport("D");
+        Airport e = new Airport("E");
 
-        Edge ab = new Edge(a, b, 1);
-        Edge bc = new Edge(b, c, 1);
-        Edge bd = new Edge(b, d, 10);
-        Edge cd = new Edge(c, d, 1);
-        Edge ce = new Edge(c, e, 10);
-        Edge de = new Edge(d, e, 1);
+        Edge<Airport> ab = new Edge<>(a, b, 1);
+        Edge<Airport> bc = new Edge<>(b, c, 1);
+        Edge<Airport> bd = new Edge<>(b, d, 10);
+        Edge<Airport> cd = new Edge<>(c, d, 1);
+        Edge<Airport> ce = new Edge<>(c, e, 10);
+        Edge<Airport> de = new Edge<>(d, e, 1);
 
         try {
-            Graph graph = new MatrixGraph(new Node[] { a, b, c, d, e }, new Edge[] { ab, bc, bd, cd, ce, de });
+            Graph<Airport> graph = new MatrixGraph<>(
+                    Arrays.asList(a, b, c, d, e), Arrays.asList( ab, bc, bd, cd, ce, de ));
 
-            List<Node> nodes = graph.getShortestPath(a, e).getNodes();
+            List<Airport> nodes = graph.getShortestPath(a, e).getNodes();
 
             assertEquals(a, nodes.get(0));
             assertEquals(b, nodes.get(1));
@@ -49,23 +50,23 @@ public class GraphTest {
 
     @Test
     public void testGetShortestNonDirectPath() {
-        Node a = new Airport("A");
-        Node b = new Airport("B");
-        Node c = new Airport("C");
-        Node d = new Airport("D");
-        Node e = new Airport("E");
+        Airport a = new Airport("A");
+        Airport b = new Airport("B");
+        Airport c = new Airport("C");
+        Airport d = new Airport("D");
+        Airport e = new Airport("E");
 
-        Edge ab = new Edge(a, b, 1);
-        Edge ac = new Edge(a, c, 2);
-        Edge bc = new Edge(b, c, 3);
-        Edge cb = new Edge(c, b, 3);
-        Edge bd = new Edge(b, d, 3);
-        Edge cd = new Edge(c, d, 1);
-        Edge de = new Edge(d, e, 5);
+        Edge<Airport> ab = new Edge<>(a, b, 1);
+        Edge<Airport> ac = new Edge<>(a, c, 2);
+        Edge<Airport> bc = new Edge<>(b, c, 3);
+        Edge<Airport> cb = new Edge<>(c, b, 3);
+        Edge<Airport> bd = new Edge<>(b, d, 3);
+        Edge<Airport> cd = new Edge<>(c, d, 1);
+        Edge<Airport> de = new Edge<>(d, e, 5);
 
         try {
-            Graph graph = new MatrixGraph(new Node[] { a, b, c, d, e }, new Edge[] { ab, ac, bc, cb, bd, cd, de });
-            List<Node> nodes = graph.getShortestNonDirectPath(a, b).getNodes();
+            Graph<Airport> graph = new MatrixGraph<>(Arrays.asList(a, b, c, d, e), Arrays.asList(ab, ac, bc, cb, bd, cd, de));
+            List<Airport> nodes = graph.getShortestNonDirectPath(a, b).getNodes();
             assertEquals(a, nodes.get(0));
             assertEquals(c, nodes.get(1));
             assertEquals(b, nodes.get(2));

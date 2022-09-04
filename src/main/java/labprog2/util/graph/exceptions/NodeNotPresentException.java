@@ -1,18 +1,16 @@
 package labprog2.util.graph.exceptions;
 
-import labprog2.util.graph.Node;
-
 /**
  * Exception thrown when a node is not present in the graph.
  */
 public class NodeNotPresentException extends GraphException {
-    private final Node node;
+    private final Object node;
 
     /**
      *
      * @param node node that was not present.
      */
-    public NodeNotPresentException(Node node) {
+    public NodeNotPresentException(Object node) {
         this.node = node;
     }
 
@@ -20,7 +18,7 @@ public class NodeNotPresentException extends GraphException {
      *
      * @return node that was not present.
      */
-    public Node getNodeNotPresent() {
+    public Object getNodeNotPresent() {
         return node;
     }
 }

@@ -9,7 +9,7 @@ import labprog2.util.graph.exceptions.NodeNotPresentException;
 
 import org.javatuples.Pair;
 
-public class MatrixGraph implements Graph {
+public class MatrixGraph<Node> implements Graph<Node> {
 
     /**
      * Matrix representation of the graph that stores its topology. An entry at (i, j) equal to zero
@@ -61,18 +61,18 @@ public class MatrixGraph implements Graph {
      * @throws NodeNotPresentException thrown if E contains an edge that has at least one endpoint
      * not contained in V.
      */
-    public MatrixGraph(Node[] V, Edge[] E)
+    public MatrixGraph(List<Node> V, List<Edge<Node>> E)
             throws NodeAlreadyPresentException, NodeNotPresentException {
 
         // Sets the maximum size of the graph (order of the matrix) to the number of nodes provided.
-        this(V.length);
+        this(V.size());
 
         for (Node v : V) {
             try { addNode(v); }
             catch (FullGraphException ignored) { /* This will not be reached, thus is ignored */ }
         }
 
-        for (Edge e : E)
+        for (Edge<Node> e : E)
             addEdge(e);
     }
 
@@ -83,14 +83,13 @@ public class MatrixGraph implements Graph {
      * of the matrix.
      *
      * @param node object implementing the node interface to be added to the graph.
-     * @return returns a reference to the current graph, in order to allow chaining.
      * @throws FullGraphException thrown if the graph is already full, as defined by its implementation.
      * @throws NodeAlreadyPresentException thrown if the node being added is already present
      *
      * @see Node
      */
     @Override
-    public Graph addNode(Node node) throws FullGraphException, NodeAlreadyPresentException {
+    public void addNode(Node node) throws FullGraphException, NodeAlreadyPresentException {
         if (curNodes == maxNodes)
             throw new FullGraphException(maxNodes);
 
@@ -103,8 +102,6 @@ public class MatrixGraph implements Graph {
         // Persist index-node relation: map node to an index of the matrix
         nodeIndexes.put(node, index);
         indexNodes.put(index, node);
-
-        return this;
     }
 
     /**
@@ -113,19 +110,16 @@ public class MatrixGraph implements Graph {
      * of the edge provided.
      *
      * @param edge Edge to be added or updated.
-     * @return returns a reference to the current graph, in order to allow chaining.
      * @throws NodeNotPresentException thrown if either of the edge endpoints is not present in the graph.
      *
      * @see Edge
      */
     @Override
-    public Graph addEdge(Edge edge) throws NodeNotPresentException {
+    public void addEdge(Edge<Node> edge) throws NodeNotPresentException {
         int srcIndex = getNodeIndex(edge.getSrcNode());
         int desIndex = getNodeIndex(edge.getDesNode());
 
         graph[srcIndex][desIndex] = edge.getWeight();
-
-        return this;
     }
 
     /**
@@ -138,8 +132,8 @@ public class MatrixGraph implements Graph {
      * @throws NodeNotPresentException thrown if the specified node is not present in the graph.
      */
     @Override
-    public List<Edge> getEdgesFrom(Node srcNode) throws NodeNotPresentException {
-        List<Edge> edges = new LinkedList<>();
+    public List<Edge<Node>> getEdgesFrom(Node srcNode) throws NodeNotPresentException {
+        List<Edge<Node>> edges = new LinkedList<>();
 
         int srcIndex = getNodeIndex(srcNode);
 
@@ -147,7 +141,7 @@ public class MatrixGraph implements Graph {
             int weight = graph[srcIndex][desIndex];
             if (weight != 0) {
                 Node desNode = indexNodes.get(desIndex);
-                edges.add(new Edge(srcNode, desNode, weight));
+                edges.add(new Edge<>(srcNode, desNode, weight));
             }
         }
 
@@ -163,7 +157,7 @@ public class MatrixGraph implements Graph {
      * @throws NodeNotPresentException thrown if either of the specified nodes is not present.
      */
     @Override
-    public Path getShortestPath(Node srcNode, Node desNode) throws NodeNotPresentException {
+    public Path<Node> getShortestPath(Node srcNode, Node desNode) throws NodeNotPresentException {
         int srcIndex = getNodeIndex(srcNode);
         int desIndex = getNodeIndex(desNode);
 
@@ -172,7 +166,7 @@ public class MatrixGraph implements Graph {
         int[] dist = dijkstraResults.getValue0();
         int[] prev = dijkstraResults.getValue1();
 
-        Path path = new Path();
+        Path<Node> path = new Path<>();
 
         // Set the cost of the path as the cost to reach the destiny node
         path.setCost(dist[desIndex]);
@@ -185,7 +179,7 @@ public class MatrixGraph implements Graph {
         for (int index = desIndex; index != -1; index = prev[index])
             path.addNode(getNodeAtIndex(index));
 
-        // Reverse the path so it is directed from source to destiny
+        // Reverse the path, so it is directed from source to destiny
         return path.reverse();
     }
 
@@ -199,13 +193,13 @@ public class MatrixGraph implements Graph {
      * @throws NodeNotPresentException thrown if either of the specified nodes is not present.
      */
     @Override
-    public Path getShortestNonDirectPath(Node srcNode, Node desNode)
+    public Path<Node> getShortestNonDirectPath(Node srcNode, Node desNode)
             throws NodeNotPresentException {
 
-        Path nonDirectPath;
+        Path<Node> nonDirectPath;
 
         try {
-            Edge directPathEdge = removeEdgeBetween(srcNode, desNode);
+            Edge<Node> directPathEdge = removeEdgeBetween(srcNode, desNode);
             nonDirectPath = getShortestPath(srcNode, desNode);
             addEdge(directPathEdge);
         } catch (EdgeNotPresentException e) {
@@ -276,9 +270,9 @@ public class MatrixGraph implements Graph {
             if (distToNode[index] < minValue)
                 continue;
 
-            List<Edge> edges = getEdgesFrom(getNodeAtIndex(index));
+            List<Edge<Node>> edges = getEdgesFrom(getNodeAtIndex(index));
 
-            for (Edge edge : edges) {
+            for (Edge<Node> edge : edges) {
                 int desIndex = getNodeIndex(edge.getDesNode());
 
                 if (visitedNode[desIndex])
@@ -333,7 +327,7 @@ public class MatrixGraph implements Graph {
      * @throws NodeNotPresentException if either of the provided edge endpoints (nodes) is not present in the graph.
      */
     @Override
-    public boolean has(Edge edge) throws NodeNotPresentException {
+    public boolean has(Edge<Node> edge) throws NodeNotPresentException {
         Node srcNode = edge.getSrcNode();
         Node desNode = edge.getDesNode();
         try {
@@ -363,8 +357,8 @@ public class MatrixGraph implements Graph {
      * @throws NodeNotPresentException thrown if either of the specified nodes is not present
      */
     @Override
-    public Edge removeEdgeBetween(Node srcNode, Node desNode) throws EdgeNotPresentException, NodeNotPresentException {
-        Edge edge = getEdgeBetween(srcNode, desNode);
+    public Edge<Node> removeEdgeBetween(Node srcNode, Node desNode) throws EdgeNotPresentException, NodeNotPresentException {
+        Edge<Node> edge = getEdgeBetween(srcNode, desNode);
 
         graph[getNodeIndex(edge.getSrcNode())][getNodeIndex(edge.getDesNode())] = 0;
 
@@ -401,11 +395,11 @@ public class MatrixGraph implements Graph {
      * @throws EdgeNotPresentException thrown if there is no edge between the specified nodes.
      */
     @Override
-    public Edge getEdgeBetween(Node srcNode, Node desNode) throws NodeNotPresentException, EdgeNotPresentException {
+    public Edge<Node> getEdgeBetween(Node srcNode, Node desNode) throws NodeNotPresentException, EdgeNotPresentException {
 
         int weight = getWeightBetween(srcNode, desNode);
 
-        return new Edge(srcNode, desNode, weight);
+        return new Edge<>(srcNode, desNode, weight);
     }
 
 }

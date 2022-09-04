@@ -1,6 +1,6 @@
 package labprog2.util.graph;
 
-public class Edge {
+public class Edge<Node> {
     private final Node srcNode;
     private final Node desNode;
     private int weight;
@@ -35,7 +35,7 @@ public class Edge {
      *
      * @param other original edge object.
      */
-    public Edge(Edge other) {
+    public Edge(Edge<Node> other) {
         srcNode = other.getSrcNode();
         desNode = other.getDesNode();
         weight = other.getWeight();
@@ -74,7 +74,7 @@ public class Edge {
      * @param weight new weight.
      * @return reference to current edge.
      */
-    public Edge setWeight(int weight) {
+    public Edge<Node> setWeight(int weight) {
         this.weight = weight;
         return this;
     }

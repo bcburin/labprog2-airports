@@ -1,18 +1,17 @@
 package labprog2.util.graph.exceptions;
 
-import labprog2.util.graph.Node;
 
 /**
  * Exception thrown when a node is already present in the graph and thus the action could not be completed.
  */
 public class NodeAlreadyPresentException extends GraphException {
-    private final Node node;
+    private final Object node;
 
     /**
      *
      * @param node node that was already present
      */
-    public NodeAlreadyPresentException(Node node) {
+    public NodeAlreadyPresentException(Object node) {
         this.node = node;
     }
 
@@ -20,7 +19,7 @@ public class NodeAlreadyPresentException extends GraphException {
      *
      * @return node that was already present
      */
-    public Node getNodeAlreadyPresent() {
+    public Object getNodeAlreadyPresent() {
         return node;
     }
 }
