@@ -11,8 +11,6 @@ import labprog2.util.graph.Edge;
 import labprog2.util.graph.Graph;
 import labprog2.util.graph.MatrixGraph;
 import labprog2.util.graph.Node;
-import labprog2.util.graph.exceptions.EdgeNotPresentException;
-import labprog2.util.graph.exceptions.FullGraphException;
 import labprog2.util.graph.exceptions.NodeAlreadyPresentException;
 import labprog2.util.graph.exceptions.NodeNotPresentException;
 
@@ -44,7 +42,7 @@ public class GraphTest {
             assertEquals(d, nodes.get(3));
             assertEquals(e, nodes.get(4));
 
-        } catch (FullGraphException | NodeAlreadyPresentException | NodeNotPresentException e1) {
+        } catch ( NodeAlreadyPresentException | NodeNotPresentException e1) {
             e1.printStackTrace();
         }
     }
@@ -71,8 +69,7 @@ public class GraphTest {
             assertEquals(a, nodes.get(0));
             assertEquals(c, nodes.get(1));
             assertEquals(b, nodes.get(2));
-        } catch (FullGraphException | NodeAlreadyPresentException | NodeNotPresentException
-                | EdgeNotPresentException e1) {
+        } catch ( NodeAlreadyPresentException | NodeNotPresentException e1) {
             e1.printStackTrace();
         }
 

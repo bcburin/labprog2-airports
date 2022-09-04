@@ -1,56 +1,59 @@
 package labprog2;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.Test;
 
 import labprog2.model.Airport;
-import labprog2.util.mysql.MySQLAirportDbConnection;
+import labprog2.App;
 
 public class MySQLAirportDbConnectionTest {
 
     @Test
     public void testGetAirportDataByID() throws ClassNotFoundException, SQLException {
-        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
+        Connection connection = App.connectToDb();
 
-        Airport airportCwb = airportConnection.getAirportData(1613);
-        Airport airportFor = airportConnection.getAirportData(2363);
-        Airport airportGig = airportConnection.getAirportData(2563);
-        Airport airportGru = airportConnection.getAirportData(2695);
+        Airport airportCwb = Airport.getAirportDataDb(connection, 1613);
+        Airport airportFor = Airport.getAirportDataDb(connection, 2363);
+        Airport airportGig = Airport.getAirportDataDb(connection, 2563);
+        Airport airportGru = Airport.getAirportDataDb(connection, 2695);
 
-        assertTrue(airportCwb.getIata().equals("CWB"));
-        assertTrue(airportFor.getIata().equals("FOR"));
-        assertTrue(airportGig.getIata().equals("GIG"));
-        assertTrue(airportGru.getIata().equals("GRU"));
+        assertEquals("CWB", airportCwb.getIata());
+        assertEquals("FOR", airportFor.getIata());
+        assertEquals("GIG", airportGig.getIata());
+        assertEquals("GRU", airportGru.getIata());
     }
 
     @Test
     public void testGetAirportDataByIata() throws ClassNotFoundException, SQLException {
-        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
+        Connection connection = App.connectToDb();
 
-        Airport airportCwb = airportConnection.getAirportData("CWB");
-        Airport airportFor = airportConnection.getAirportData("FOR");
-        Airport airportGig = airportConnection.getAirportData("GIG");
-        Airport airportGru = airportConnection.getAirportData("GRU");
+        Airport airportCwb = Airport.getAirportDataDb(connection, "CWB");
+        Airport airportFor = Airport.getAirportDataDb(connection, "FOR");
+        Airport airportGig = Airport.getAirportDataDb(connection, "GIG");
+        Airport airportGru = Airport.getAirportDataDb(connection, "GRU");
 
-        assertTrue(airportCwb.getIata().equals("CWB"));
-        assertTrue(airportFor.getIata().equals("FOR"));
-        assertTrue(airportGig.getIata().equals("GIG"));
-        assertTrue(airportGru.getIata().equals("GRU"));
+        assertEquals("CWB", airportCwb.getIata());
+        assertEquals("FOR", airportFor.getIata());
+        assertEquals("GIG", airportGig.getIata());
+        assertEquals("GRU", airportGru.getIata());
     }
 
     @Test
     public void testGetAllAirportData() throws ClassNotFoundException, SQLException {
-        MySQLAirportDbConnection airportConnection = new MySQLAirportDbConnection();
+        Connection connection = App.connectToDb();
 
-        Airport[] airports = airportConnection.getAllAirportData();
+        List<Airport> airports = Airport.getAllAirportDataDb(connection);
 
-        assertTrue(airports[10].getIata().equals("CWB"));
-        assertTrue(airports[13].getIata().equals("FOR"));
-        assertTrue(airports[14].getIata().equals("GIG"));
-        assertTrue(airports[15].getIata().equals("GRU"));
+        assertEquals("CWB", airports.get(10).getIata());
+        assertEquals("FOR", airports.get(13).getIata());
+        assertEquals("GIG", airports.get(14).getIata());
+        assertEquals("GRU", airports.get(15).getIata());
 
     }
 
