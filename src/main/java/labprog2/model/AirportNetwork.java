@@ -17,7 +17,7 @@ public class AirportNetwork {
 
     private final List<Airport> airports;
 
-    private final Graph network;
+    private final Graph<Airport> network;
 
     /**
      * Created a fully connected airport network
@@ -27,7 +27,7 @@ public class AirportNetwork {
     public AirportNetwork(List<Airport> airports) {
         this.airports = airports;
         // Initialize network as a graph
-        network = new MatrixGraph(airports.size());
+        network = new MatrixGraph<>(airports.size());
         // Add all airports as nodes in the graph
         for (Airport airport : airports) {
             try {
@@ -51,7 +51,7 @@ public class AirportNetwork {
                     // Calculate distance between the airports
                     int distance = (int) srcAirport.getGeographicCoordinates().distanceTo(desAirport.getGeographicCoordinates());
                     // Create an edge containing both airports and with the distance between them as weight
-                    Edge edge = new Edge(srcAirport, desAirport, distance);
+                    Edge<Airport> edge = new Edge<>(srcAirport, desAirport, distance);
                     try {
                         // Add edge to graph
                         network.addEdge(edge);
@@ -72,7 +72,7 @@ public class AirportNetwork {
      * @return path between given airports.
      * @throws NodeNotPresentException thrown if either of the airports is not present in the network.
      */
-    public Path getShortestNonDirectPath(Airport srcAirport, Airport desAirport) throws NodeNotPresentException {
+    public Path<Airport> getShortestNonDirectPath(Airport srcAirport, Airport desAirport) throws NodeNotPresentException {
         return this.network.getShortestNonDirectPath(srcAirport, desAirport);
     }
 

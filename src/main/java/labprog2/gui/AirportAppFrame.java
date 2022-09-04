@@ -3,7 +3,7 @@ package labprog2.gui;
 import labprog2.model.Airport;
 import labprog2.model.AirportNetwork;
 import labprog2.model.UserSearch;
-import labprog2.util.graph.Node;
+import labprog2.util.graph.Path;
 import labprog2.util.graph.exceptions.NodeNotPresentException;
 
 import javax.swing.*;
@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AirportAppFrame extends JFrame {
@@ -131,40 +130,6 @@ public class AirportAppFrame extends JFrame {
     }
 
     /**
-     * Find the airports in the shortest non-direct path.
-     *
-     * @param srcAirport source airport.
-     * @param desAirport destiny airport.
-     * @return list containing the airports in the shortest non-direct path.
-     */
-    private List<Airport> findShortestPath(Airport srcAirport, Airport desAirport) {
-        try {
-            // Get nodes that make up the shortest path
-            List<Node> pathAirportNodes = this.airportNetwork.getShortestNonDirectPath(srcAirport, desAirport).getNodes();
-
-            // Transform the list of nodes to a list of airport objects
-            List<Airport> pathAirports = new LinkedList<>();
-
-            // Iterate through all nodes and saved airports
-            for (Node airportNode : pathAirportNodes) {
-                for (Airport airport : this.airports) {
-                    // Compare each node to a saved airport
-                    if (Objects.equals(airport.getIata(), airportNode.toString())) {
-                        // If their information matches, add airport to the list
-                        pathAirports.add(airport);
-                    }
-                }
-            }
-
-            return pathAirports;
-
-        } catch (NodeNotPresentException e) {
-            /* This code will never be reached */
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Shows a string containing all airports of the path to the user. Adds these airports to the
      * getInformationComboBox. Makes all components related to the display of the result visible.
      *
@@ -200,16 +165,22 @@ public class AirportAppFrame extends JFrame {
         assert srcAirport != null;
         assert desAirport != null;
 
-        List<Airport> pathAirports = findShortestPath(srcAirport, desAirport);
+        Path<Airport> pathAirports;
 
-        setupResultComponents(pathAirports);
+        try {
+            pathAirports = this.airportNetwork.getShortestNonDirectPath(srcAirport, desAirport);
+        } catch (NodeNotPresentException e) {
+            throw new RuntimeException(e);
+        }
+
+        setupResultComponents(pathAirports.getNodes());
 
         // Create user search object
         UserSearch userSearch = new UserSearch(
                 srcAirport,
                 desAirport,
                 new Timestamp(System.currentTimeMillis()),
-                pathAirports.stream().map(String::valueOf).collect(Collectors.joining(" ")));
+                pathAirports.getNodes().stream().map(String::valueOf).collect(Collectors.joining(" ")));
 
         try {
             // Save user search data
