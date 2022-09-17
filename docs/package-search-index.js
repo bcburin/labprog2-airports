@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"labprog2"},{"l":"labprog2.gui"},{"l":"labprog2.model"},{"l":"labprog2.util.graph"},{"l":"labprog2.util.graph.exceptions"},{"l":"labprog2.util.location"}];updateSearchResults();

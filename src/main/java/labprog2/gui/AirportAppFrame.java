@@ -10,8 +10,10 @@ import javax.swing.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AirportAppFrame extends JFrame {
@@ -86,7 +88,7 @@ public class AirportAppFrame extends JFrame {
      * the combo box items with them. Also adds the '-' option to disable state filters.
      */
     private void setAirportStateComboBoxes() {
-        List<String> airportStates = new LinkedList<>();
+        Set<String> airportStates = new HashSet<>();
 
         for (Airport airport : this.airports) airportStates.add(airport.getAddress().getStateCode());
 
@@ -201,6 +203,7 @@ public class AirportAppFrame extends JFrame {
 
         if (selectedState.equals("-")) {
             updateFromAirportComboBox(this.airports);
+            return;
         }
 
         List<Airport> selectedAirports = new LinkedList<>();
@@ -225,6 +228,7 @@ public class AirportAppFrame extends JFrame {
 
         if (selectedState.equals("-")) {
             updateToAirportComboBox(this.airports);
+            return;
         }
 
         List<Airport> selectedAirports = new LinkedList<>();
